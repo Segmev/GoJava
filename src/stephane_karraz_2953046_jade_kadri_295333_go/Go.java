@@ -8,13 +8,13 @@ import javafx.stage.Stage;
 public class Go extends Application {
     public void init() {
         sp_mainlayout = new StackPane();
-        go_controller = new GoController();
+        go_controller = new CustomControl();
         sp_mainlayout.getChildren().add(go_controller);
     }
 
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("GO");
-        primaryStage.setScene(new Scene(sp_mainlayout   , 900, 900));
+        primaryStage.setScene(new Scene(sp_mainlayout, 900, 900));
         primaryStage.show();
     }
 
@@ -25,5 +25,5 @@ public class Go extends Application {
     }
 
     private StackPane sp_mainlayout;
-    private GoController go_controller;
+    private CustomControl go_controller;
 }
