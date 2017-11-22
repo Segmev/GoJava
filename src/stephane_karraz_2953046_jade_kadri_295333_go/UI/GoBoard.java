@@ -9,7 +9,7 @@ import javafx.scene.text.Font;
 
 public class GoBoard extends Pane {
     public GoBoard() {
-        font = Font.loadFont(GoBoard.class.getResource("SuperMario256.ttf").toExternalForm(), 100);
+        font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 100);
         initialiseBoardUI();
     }
 
@@ -18,7 +18,7 @@ public class GoBoard extends Pane {
         //test = new Label("TEST");
         //test.setFont(font);
         //test.setTextFill(Color.BLACK);
-        bg_image = new Image("textures/board.jpg");
+        bg_image = new Image("resources/board.jpg");
         background = new Rectangle();
         ImagePattern ip_background = new ImagePattern(bg_image);
         background.setFill(ip_background);
