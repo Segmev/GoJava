@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.scene.layout.StackPane;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import stephane_karraz_2953046_jade_kadri_295333_go.UI.CustomControl;
 
 public class Go extends Application {
     public void init() {

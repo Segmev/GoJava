@@ -1,4 +1,4 @@
-package stephane_karraz_2953046_jade_kadri_295333_go;
+package stephane_karraz_2953046_jade_kadri_295333_go.Logic;
 
 public class GameLogic {
 
@@ -21,6 +21,9 @@ public class GameLogic {
     }
 }
 
+class Stone {
+
+}
 
 /*
     play(X, Y) {
