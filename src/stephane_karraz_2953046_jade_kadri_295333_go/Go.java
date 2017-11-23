@@ -15,7 +15,7 @@ public class Go extends Application {
 
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("GO");
-        primaryStage.setScene(new Scene(sp_mainlayout, 900, 900));
+        primaryStage.setScene(new Scene(sp_mainlayout, 1200, 900));
         primaryStage.show();
     }
 
