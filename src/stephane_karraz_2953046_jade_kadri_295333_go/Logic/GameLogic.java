@@ -29,7 +29,7 @@ public class GameLogic {
     }
 
     public boolean      isGameEnded() {
-        return false;
+        return end;
     }
 
     public int          getTeamScore(int teamId) {
@@ -51,11 +51,11 @@ public class GameLogic {
         return board;
     }
 
-    public boolean      isPosCanBePlayed(int x, int y) {
+    public boolean      posCanBePlayed(int teamId, int x, int y) {
         if (!(isInBounds(x, y)) || stones[x][y].teamId > 0)
             return false;
-        if (getNbLibertiesAtEmptyPose(currentPlayer, x, y) <= 0) {
-            if (!canTakeStone(currentPlayer, x, y)) {
+        if (getNbLibertiesAtEmptyPose(teamId, x, y) <= 0) {
+            if (!canTakeStone(teamId, x, y)) {
                 return false;
             }
         }
@@ -63,7 +63,7 @@ public class GameLogic {
     }
 
     public boolean      playPos(int x, int y) {
-        if (!(isPosCanBePlayed(x, y)))
+        if (!end || !(posCanBePlayed(currentPlayer, x, y)))
             return false;
 
         takeStonesAround(currentPlayer, x, y);
@@ -71,7 +71,15 @@ public class GameLogic {
         updateOrCreateGroupWithStone(currentPlayer, x, y);
 
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
+        checkAnyMovesAvailable(currentPlayer);
         return true;
+    }
+
+    public void      passTurn(int teamId) {
+        if (teams[(teamId == 1 ? 1 : 0)].passedTurn)
+            end = true;
+        teams[teamId - 1].passedTurn = true;
+        currentPlayer = (currentPlayer == 1 ? 2 : 1);
     }
 
     public int          getCurrentPlayer() {
@@ -81,6 +89,18 @@ public class GameLogic {
     // public methods
     // =====================
     // private methods
+
+    private boolean     checkAnyMovesAvailable(int teamId) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (posCanBePlayed(teamId, i, j)){
+                    return true;
+                }
+            }
+        }
+        passTurn(teamId);
+        return false;
+    }
 
     private int         howManyLibertiesAtDir(int teamId, int x, int y) {
         if (!(isInBounds(x, y)) || (stones[x][y].teamId > 0 && stones[x][y].teamId != teamId))
@@ -201,6 +221,7 @@ public class GameLogic {
 
     Stone[][]           stones;
     int[][]             board;
+    boolean             end;
 
     void        printBoard() {
         this.getBoard();

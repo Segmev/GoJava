@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Team {
-    private int          team;
-    List<StonesGroup>    groups;
+    private int         team;
+    List<StonesGroup>   groups;
 
-    int                  stonesTaken;
+    int                 stonesTaken;
+    boolean             passedTurn;
 
     Team(int team) {
         this.team = team;
