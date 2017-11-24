@@ -64,6 +64,8 @@ public class GameLogic {
             return false;
 
         stones[x][y].teamId = currentPlayer;
+        
+        takeStonesAround(currentPlayer, x, y);
         updateOrCreateGroupWithStone(currentPlayer, x, y);
 
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
