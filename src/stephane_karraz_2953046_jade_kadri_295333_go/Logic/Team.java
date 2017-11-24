@@ -13,6 +13,7 @@ class Team {
     Team(int team) {
         this.team = team;
         groups = new ArrayList<>();
+        passedTurn = false;
     }
 
     public int          getTeam() {
