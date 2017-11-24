@@ -39,12 +39,14 @@ public class GoBoard extends Pane {
         turn_label = new Label("Player turn : Black");
         turn_label.setFont(turn_font);
         turn_label.setTextFill(Color.BLACK);
-        bg_image = new Image("resources/board.jpg");
+        bg_image_board = new Image("resources/board.jpg");
+        bg_image_menu = new Image("resources/menu.jpg");
         background_board = new Rectangle();
         background_menu = new Rectangle();
-        ImagePattern ip_background = new ImagePattern(bg_image);
-        background_menu.setFill(Color.SADDLEBROWN);
-        background_board.setFill(ip_background);
+        ImagePattern ip_background_board = new ImagePattern(bg_image_board);
+        ImagePattern ip_background_menu = new ImagePattern(bg_image_menu);
+        background_board.setFill(ip_background_board);
+        background_menu.setFill(ip_background_menu);
         getChildren().addAll(background_board, background_menu, p1s_label, p2s_label, turn_label);
     }
 
@@ -54,6 +56,7 @@ public class GoBoard extends Pane {
         separation.setStartX(0);
         separation.setStartY(0);
         separation.setEndX(0);
+        separation.setStyle("-fx-stroke-width: 6;");
         separation.setStroke(Color.BLACK);
         separation_t = new Translate(0, 0);
         separation.getTransforms().add(separation_t);
@@ -161,7 +164,8 @@ public class GoBoard extends Pane {
     private Label turn_label;
     private Rectangle background_menu;
     private Rectangle background_board;
-    private Image bg_image;
+    private Image bg_image_board;
+    private Image bg_image_menu;
     private Font score_font;
     private Font turn_font;
     private Font pos_font;
