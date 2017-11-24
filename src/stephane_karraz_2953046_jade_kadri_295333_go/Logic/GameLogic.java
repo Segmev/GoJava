@@ -1,5 +1,8 @@
 package stephane_karraz_2953046_jade_kadri_295333_go.Logic;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class GameLogic {
 
     public void         init(int nbX, int nbY) {
@@ -63,9 +66,8 @@ public class GameLogic {
         if (!(isPosCanBePlayed(x, y)))
             return false;
 
-        stones[x][y].teamId = currentPlayer;
-        
         takeStonesAround(currentPlayer, x, y);
+        stones[x][y].teamId = currentPlayer;
         updateOrCreateGroupWithStone(currentPlayer, x, y);
 
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
@@ -80,25 +82,26 @@ public class GameLogic {
     // =====================
     // private methods
 
-    private int         getLibertiesAtPos(int teamId, int x, int y) {
-        if (isInBounds(x, y) && stones[x][y].teamId == 0) {
+    private int         howManyLibertiesAtDir(int teamId, int x, int y) {
+        if (!(isInBounds(x, y)) || (stones[x][y].teamId > 0 && stones[x][y].teamId != teamId))
+            return 0;
+        if (stones[x][y].teamId == 0)
             return 1;
-        } else if (isInBounds(x, y) && stones[x][y].teamId > 0 && stones[x][y].teamId != teamId) {
-            for (StonesGroup group: teams[(teamId == 2) ? 1 : 0].groups) {
-                if (group.group.contains(stones[x][y]) && group.liberties.size() > 1) {
-                    return group.liberties.size() - 1;
-                }
+        for (StonesGroup group: teams[teamId-1].groups) {
+            if (group.group.contains(stones[x][y])) {
+                updateGroupLiberties(group);
+                return group.liberties.size() - 1;
             }
         }
-        return 0;
+        return (0); // shouldn't happens
     }
 
     private int         getNbLibertiesAtEmptyPose(int teamId, int x, int y) {
         int liberties = 0;
-        liberties += getLibertiesAtPos(teamId, x-1, y);
-        liberties += getLibertiesAtPos(teamId, x+1, y);
-        liberties += getLibertiesAtPos(teamId, x, y-1);
-        liberties += getLibertiesAtPos(teamId, x, y+1);
+        liberties += howManyLibertiesAtDir(teamId, x-1, y);
+        liberties += howManyLibertiesAtDir(teamId, x+1, y);
+        liberties += howManyLibertiesAtDir(teamId, x, y-1);
+        liberties += howManyLibertiesAtDir(teamId, x, y+1);
         return liberties;
     }
 
@@ -106,7 +109,7 @@ public class GameLogic {
         return (!(x < 0 || x >= width || y < 0 ||  y >= height));
     }
 
-    private void        updateGroupLiberties(StonesGroup group, int teamId) {
+    private void        updateGroupLiberties(StonesGroup group) {
         group.liberties.clear();
         for(Stone stone: group.group) {
             if (isInBounds(stone.x-1, stone.y) && stones[stone.x-1][stone.y].teamId == 0) {
@@ -147,15 +150,18 @@ public class GameLogic {
         transferStones(newGroup, teamId, x, y-1);
         transferStones(newGroup, teamId, x, y+1);
         newGroup.group.add(stones[x][y]);
-        updateGroupLiberties(newGroup, teamId);
+        updateGroupLiberties(newGroup);
         teams[teamId - 1].groups.add(newGroup);
     }
 
     StonesGroup         canGroupsBeTaken(int teamId, int x, int y){
         if (isInBounds(x, y) && stones[x][y].teamId > 0 && stones[x][y].teamId != teamId) {
             for (StonesGroup group: teams[(teamId == 1) ? 1 : 0].groups) {
-                if (group.group.contains(stones[x][y]) && group.liberties.size() <= 1) {
-                    return group;
+                if (group.group.contains(stones[x][y])) {
+                    updateGroupLiberties(group);
+                    if (group.liberties.size() <= 1) {
+                        return group;
+                    }
                 }
             }
         }
@@ -180,11 +186,11 @@ public class GameLogic {
 
         for (StonesGroup tgroup : takenGroups) {
             if (tgroup != null) {
-                teams[teamId - 1].stonesTaken += takenGroups[0].group.size();
+                teams[teamId - 1].stonesTaken += tgroup.group.size();
                 for (Stone stone : tgroup.group) {
                     stone.teamId = 0;
                 }
-                teams[teamId].groups.remove(tgroup);
+                teams[(teamId == 1 ? 1 : 0)].groups.remove(tgroup);
             }
         }
     }
@@ -196,15 +202,61 @@ public class GameLogic {
     Stone[][]           stones;
     int[][]             board;
 
+    void        printBoard() {
+        this.getBoard();
+        System.out.print("  x    ");
+        for (int i = 0; i < height; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.print("\ny\n      ");
+
+        for (int i = 0; i < height; i++) {
+            System.out.print(" =");
+        }
+        System.out.println();
+
+        for (int i = 0; i < height; i++) {
+            System.out.print(i + "    |");
+            for (int j = 0; j < width; j++) {
+                System.out.print(" " + board[j][i]);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
     // testing main
     public static void  main(String args[]) {
         GameLogic game = new GameLogic();
-        game.init(9,9);
-        System.out.println(game.playPos(5,6));
-        System.out.println(game.playPos(4,5));
-        System.out.println(game.playPos(4,4));
-        System.out.println(game.playPos(5,5));
-        System.out.println(game.playPos(6,5));
-        System.out.println(game.teams[0].groups.get(0).liberties.size());
+        game.init(7,7);
+
+        /*
+        game.playPos(1,0);
+        game.playPos(2,0);
+        game.playPos(0,1);
+        game.playPos(0,2);
+        game.playPos(4,5);
+        game.playPos(1,1);
+        game.playPos(4,6);
+        */
+
+        game.printBoard();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int x, y;
+
+        for ( ; ; ) {
+            try {
+                System.out.print("x: ");
+                x = Integer.parseInt(br.readLine());
+                System.out.print("y: ");
+                y = Integer.parseInt(br.readLine());
+                if (!(game.playPos(x, y)))
+                    System.out.println("Bad move.");
+                game.printBoard();
+                System.out.println("score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }
