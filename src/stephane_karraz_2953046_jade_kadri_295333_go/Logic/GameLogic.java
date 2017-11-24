@@ -8,6 +8,7 @@ public class GameLogic {
     public void         init(int nbX, int nbY) {
         width = nbX;
         height = nbY;
+        end = false;
 
         currentPlayer = 1;
         teams = new Team[2];
