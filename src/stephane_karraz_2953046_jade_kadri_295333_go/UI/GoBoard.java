@@ -14,14 +14,15 @@ public class GoBoard extends Pane {
     public GoBoard() {
         score_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 25);
         turn_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 23);
-        pos_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 40);
+        pos_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 25);
         horizontal = new Line[8];
         vertical = new Line[8];
         horizontal_t = new Translate[8];
         vertical_t = new Translate[8];
         lb_horizontal_top = new Label[8];
         lb_horizontal_bottom = new Label[8];
-        lb_vertical = new Label[8];
+        lb_vertical_left = new Label[8];
+        lb_vertical_right = new Label[8];
         initialiseBoardUI();
         initialisePosLabel();
         initialiseStroke();
@@ -62,6 +63,7 @@ public class GoBoard extends Pane {
             horizontal[i].setStartX(100);
             horizontal[i].setStartY(100);
             horizontal[i].setEndY(100);
+            horizontal[i].setStyle("-fx-stroke-width: 3;");
             horizontal[i].setStroke(Color.BLACK);
             horizontal_t[i] = new Translate(0, 0);
             horizontal[i].getTransforms().add(horizontal_t[i]);
@@ -69,6 +71,7 @@ public class GoBoard extends Pane {
             vertical[i].setStartX(100);
             vertical[i].setStartY(100);
             vertical[i].setEndX(100);
+            vertical[i].setStyle("-fx-stroke-width: 3;");
             vertical[i].setStroke(Color.BLACK);
             vertical_t[i] = new Translate(0, 0);
             vertical[i].getTransforms().add(vertical_t[i]);
@@ -90,10 +93,13 @@ public class GoBoard extends Pane {
             lb_horizontal_bottom[i] = new Label("" + letter);
             lb_horizontal_bottom[i].setFont(pos_font);
             lb_horizontal_bottom[i].setTextFill(Color.BLACK);
-            lb_vertical[i] = new Label("" + (pos_number - i));
-            lb_vertical[i].setFont(pos_font);
-            lb_vertical[i].setTextFill(Color.BLACK);
-            getChildren().addAll(lb_horizontal_top[i], lb_horizontal_bottom[i], lb_vertical[i]);
+            lb_vertical_left[i] = new Label("" + (pos_number - i));
+            lb_vertical_left[i].setFont(pos_font);
+            lb_vertical_left[i].setTextFill(Color.BLACK);
+            lb_vertical_right[i] = new Label("" + (pos_number - i));
+            lb_vertical_right[i].setFont(pos_font);
+            lb_vertical_right[i].setTextFill(Color.BLACK);
+            getChildren().addAll(lb_horizontal_top[i], lb_horizontal_bottom[i], lb_vertical_left[i], lb_vertical_right[i]);
         }
     }
 
@@ -102,11 +108,18 @@ public class GoBoard extends Pane {
         super.resize(width, height);
         background_board.setWidth(width * 0.75);
         background_board.setHeight(height);
+        cell_width = ((width * 0.75) - 200) / 7;
+        cell_height = (height - 200) / 7;
+        resizeMenu(width, height);
+        resizeHorizontal((width * 0.75), height);
+        resizeVertical((width * 0.75), height);
+    }
+
+    public void resizeMenu(double width, double height)
+    {
         background_menu.setX(width * 0.75);
         background_menu.setWidth(width * 0.25);
         background_menu.setHeight(height);
-        cell_width = width / (width / 100);
-        cell_height = height / (height / 100);
         p1s_label.setLayoutX((width * 0.75) + 15);
         p1s_label.setLayoutY(0);
         p2s_label.setLayoutX((width * 0.75) + 15);
@@ -115,25 +128,34 @@ public class GoBoard extends Pane {
         turn_label.setLayoutY(height - 300);
         separation.setEndY(height);
         separation_t.setX(width * 0.75);
+    }
+
+    public void resizeHorizontal(double width, double height)
+    {
         for (int i = 0; i < 8; i++)
         {
-            lb_horizontal_top[i].setLayoutX(((cell_width) * (i + 1)) - 10);
-            lb_horizontal_top[i].setLayoutY(cell_height - 80);
-            lb_horizontal_bottom[i].setLayoutX(((cell_width) * (i + 1)) - 10);
-            lb_horizontal_bottom[i].setLayoutY((8 * cell_height) + 25);
-            horizontal[i].setEndX(8 * cell_height);
+            lb_horizontal_top[i].setLayoutX(93 + (cell_width * (i)));
+            lb_horizontal_top[i].setLayoutY(height - (height - 25));
+            lb_horizontal_bottom[i].setLayoutX(93 + (cell_width * (i)));
+            lb_horizontal_bottom[i].setLayoutY(height - 60);
+            horizontal[i].setEndX(width - 100);
             horizontal_t[i].setY(i * cell_height);
         }
+    }
+
+    public void resizeVertical(double width, double height)
+    {
         for (int i = 0; i < 8; i++)
         {
-            lb_vertical[i].setLayoutY(((cell_height) * (i + 1)) - 25);
-            lb_vertical[i].setLayoutX(cell_width - 70);
-            vertical[i].setEndY(8 * cell_width);
+            lb_vertical_left[i].setLayoutY(80 + (cell_height * (i)));
+            lb_vertical_left[i].setLayoutX(width - (width - 35));
+            lb_vertical_right[i].setLayoutY(80 + (cell_height * (i)));
+            lb_vertical_right[i].setLayoutX(width - 50);
+            vertical[i].setEndY(height - 100);
             vertical_t[i].setX(i * cell_width);
         }
     }
 
-    //private Rectangle background;
     private Label p1s_label;
     private Label p2s_label;
     private Label turn_label;
@@ -147,7 +169,8 @@ public class GoBoard extends Pane {
     private Translate separation_t;
     private Label[] lb_horizontal_top;
     private Label[] lb_horizontal_bottom;
-    private Label[] lb_vertical;
+    private Label[] lb_vertical_left;
+    private Label[] lb_vertical_right;
     private Line[] horizontal;
     private Line[] vertical;
     private Translate[] horizontal_t;
