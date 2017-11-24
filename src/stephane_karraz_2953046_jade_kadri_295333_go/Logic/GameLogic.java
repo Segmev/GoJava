@@ -12,9 +12,11 @@ public class GameLogic {
         teams[1] = new Team(2);
 
         stones = new Stone[nbX][nbY];
-        for (int i = 0; i < nbX; i++) {
-            for (int j = 0; j < nbY; j++) {
+        board = new int[nbX][nbY];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 stones[i][j] = new Stone(0, i, j);
+                board[i][j] = 0;
             }
         }
     }
@@ -35,6 +37,15 @@ public class GameLogic {
         if (isInBounds(x, y))
             return stones[x][y].teamId;
         return (-1);
+    }
+
+    public int[][]      getBoard() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                board[i][j] = stones[i][j].teamId;
+            }
+        }
+        return board;
     }
 
     public boolean      isPosCanBePlayed(int x, int y) {
@@ -181,6 +192,7 @@ public class GameLogic {
     Team[]              teams;
 
     Stone[][]           stones;
+    int[][]             board;
 
     // testing main
     public static void  main(String args[]) {
