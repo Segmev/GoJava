@@ -5,9 +5,10 @@ import java.util.List;
 
 public class StonesGroup {
     List<Stone>     group;
-    int             liberties;
+    List<Stone>     liberties;
 
     StonesGroup() {
         group = new ArrayList<>();
+        liberties = new ArrayList<>();
     }
 }

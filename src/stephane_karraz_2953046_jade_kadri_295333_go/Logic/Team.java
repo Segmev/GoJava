@@ -7,7 +7,7 @@ class Team {
     private int          team;
     List<StonesGroup>    groups;
 
-    private int          stonesTaken;
+    int                  stonesTaken;
 
     Team(int team) {
         this.team = team;
