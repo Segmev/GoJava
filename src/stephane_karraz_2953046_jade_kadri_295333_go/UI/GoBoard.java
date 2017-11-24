@@ -5,14 +5,16 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Translate;
+import stephane_karraz_2953046_jade_kadri_295333_go.Logic.GameLogic;
 
 public class GoBoard extends Pane {
-    public GoBoard() {
-        score_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 25);
+    GoBoard() {
+        score_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 35);
         turn_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 23);
         pos_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 25);
         horizontal = new Line[8];
@@ -23,34 +25,29 @@ public class GoBoard extends Pane {
         lb_horizontal_bottom = new Label[8];
         lb_vertical_left = new Label[8];
         lb_vertical_right = new Label[8];
+        gl_go = new GameLogic();
         initialiseBoardUI();
         initialisePosLabel();
         initialiseStroke();
+        gl_go.resetGame(7, 7);
+        initialiseScore();
     }
 
     private void initialiseBoardUI()
     {
-        p1s_label = new Label("Player 1 : 0");
-        p1s_label.setFont(score_font);
-        p1s_label.setTextFill(Color.BLACK);
-        p2s_label = new Label("Player 2 : 0");
-        p2s_label.setFont(score_font);
-        p2s_label.setTextFill(Color.WHITE);
-        turn_label = new Label("Player turn : Black");
-        turn_label.setFont(turn_font);
-        turn_label.setTextFill(Color.BLACK);
-        bg_image_board = new Image("resources/board.jpg");
-        bg_image_menu = new Image("resources/menu.jpg");
-        background_board = new Rectangle();
-        background_menu = new Rectangle();
+        Image bg_image_board = new Image("resources/board.jpg");
+        Image bg_image_menu = new Image("resources/menu.jpg");
         ImagePattern ip_background_board = new ImagePattern(bg_image_board);
         ImagePattern ip_background_menu = new ImagePattern(bg_image_menu);
+
+        background_board = new Rectangle();
+        background_menu = new Rectangle();
         background_board.setFill(ip_background_board);
         background_menu.setFill(ip_background_menu);
-        getChildren().addAll(background_board, background_menu, p1s_label, p2s_label, turn_label);
+        getChildren().addAll(background_board, background_menu);
     }
 
-    public void initialiseStroke()
+    private void initialiseStroke()
     {
         separation = new Line();
         separation.setStartX(0);
@@ -83,7 +80,29 @@ public class GoBoard extends Pane {
         getChildren().add(separation);
     }
 
-    public void initialisePosLabel()
+    private void initialiseScore()
+    {
+        p1s_label = new Label("" + gl_go.getTeamScore(1));
+        p1s_label.setFont(score_font);
+        p1s_label.setTextFill(Color.WHITE);
+        p1s_ellipse = new Ellipse();
+        p1s_ellipse_t = new Translate();
+        p1s_ellipse.setFill(Color.BLACK);
+        p1s_ellipse.getTransforms().add(p1s_ellipse_t);
+        p2s_label = new Label("" + gl_go.getTeamScore(2));
+        p2s_label.setFont(score_font);
+        p2s_label.setTextFill(Color.BLACK);
+        p2s_ellipse = new Ellipse();
+        p2s_ellipse_t = new Translate();
+        p2s_ellipse.setFill(Color.WHITE);
+        p2s_ellipse.getTransforms().add(p2s_ellipse_t);
+        turn_label = new Label("Player turn : Black");
+        turn_label.setFont(turn_font);
+        turn_label.setTextFill(Color.BLACK);
+        getChildren().addAll(p1s_ellipse, p2s_ellipse, p1s_label, p2s_label, turn_label);
+    }
+
+    private void initialisePosLabel()
     {
         char pos_letter = 'A';
         int pos_number = 8;
@@ -106,6 +125,17 @@ public class GoBoard extends Pane {
         }
     }
 
+    public void placePiece(double x, double y)
+    {
+        int cell_x = (int) (x / cell_width);
+        int cell_y = (int) (y / cell_height);
+
+        gl_go.playPos(cell_x, cell_y);
+
+        p1s_label.setText("" + gl_go.getTeamScore(1));
+        p2s_label.setText("" + gl_go.getTeamScore(2));
+    }
+
     @Override
     public void resize(double width, double height) {
         super.resize(width, height);
@@ -116,24 +146,25 @@ public class GoBoard extends Pane {
         resizeMenu(width, height);
         resizeHorizontal((width * 0.75), height);
         resizeVertical((width * 0.75), height);
+        resizeScore(width, height, cell_width, cell_height);
     }
 
-    public void resizeMenu(double width, double height)
+    private void resizeMenu(double width, double height)
     {
         background_menu.setX(width * 0.75);
         background_menu.setWidth(width * 0.25);
         background_menu.setHeight(height);
-        p1s_label.setLayoutX((width * 0.75) + 15);
-        p1s_label.setLayoutY(0);
-        p2s_label.setLayoutX((width * 0.75) + 15);
-        p2s_label.setLayoutY(35);
+        p1s_label.setLayoutX((width * 0.75) + ((width * 0.235) / 2));
+        p1s_label.setLayoutY(height * 0.17);
+        p2s_label.setLayoutX((width * 0.75) + ((width * 0.235) / 2));
+        p2s_label.setLayoutY(height * 0.35);
         turn_label.setLayoutX((width * 0.75) + 15);
         turn_label.setLayoutY(height - 300);
         separation.setEndY(height);
         separation_t.setX(width * 0.75);
     }
 
-    public void resizeHorizontal(double width, double height)
+    private void resizeHorizontal(double width, double height)
     {
         for (int i = 0; i < 8; i++)
         {
@@ -146,7 +177,7 @@ public class GoBoard extends Pane {
         }
     }
 
-    public void resizeVertical(double width, double height)
+    private void resizeVertical(double width, double height)
     {
         for (int i = 0; i < 8; i++)
         {
@@ -159,13 +190,32 @@ public class GoBoard extends Pane {
         }
     }
 
+    private void resizeScore(double width, double height, double ellipse_width, double ellipse_height)
+    {
+        p1s_ellipse.setRadiusX(30);
+        p1s_ellipse.setRadiusY(30);
+        p1s_ellipse.setCenterX(30 / 2);
+        p1s_ellipse.setCenterY(30 / 2);
+        p2s_ellipse.setRadiusX(30);
+        p2s_ellipse.setRadiusY(30);
+        p2s_ellipse.setCenterX(30 / 2);
+        p2s_ellipse.setCenterY(30 / 2);
+        System.out.println(ellipse_width / 2);
+        p1s_ellipse_t.setX((width * 0.75) + ((width * 0.225) / 2));
+        p1s_ellipse_t.setY(height * 0.18);
+        p2s_ellipse_t.setX((width * 0.75) + ((width * 0.225) / 2));
+        p2s_ellipse_t.setY(height * 0.36);
+    }
+
     private Label p1s_label;
     private Label p2s_label;
     private Label turn_label;
     private Rectangle background_menu;
     private Rectangle background_board;
-    private Image bg_image_board;
-    private Image bg_image_menu;
+    private Ellipse p1s_ellipse;
+    private Ellipse p2s_ellipse;
+    private Translate p1s_ellipse_t;
+    private Translate p2s_ellipse_t;
     private Font score_font;
     private Font turn_font;
     private Font pos_font;
@@ -181,4 +231,5 @@ public class GoBoard extends Pane {
     private Translate[] vertical_t;
     private double cell_width;
     private double cell_height;
+    private GameLogic gl_go;
 }

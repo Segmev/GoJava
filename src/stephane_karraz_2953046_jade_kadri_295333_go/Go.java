@@ -13,7 +13,7 @@ public class Go extends Application {
         sp_mainlayout.getChildren().add(go_controller);
     }
 
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("GO");
         primaryStage.setScene(new Scene(sp_mainlayout, 800, 600));
         primaryStage.show();

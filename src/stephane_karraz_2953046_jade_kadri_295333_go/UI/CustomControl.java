@@ -7,6 +7,10 @@ public class CustomControl extends Control {
         setSkin(new CustomControlSkin(this));
         go_board = new GoBoard();
         getChildren().add(go_board);
+
+        setOnMouseClicked(event -> {
+            go_board.placePiece(event.getX(), event.getY());
+        });
     }
 
     @Override
