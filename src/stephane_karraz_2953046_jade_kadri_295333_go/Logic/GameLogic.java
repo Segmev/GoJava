@@ -224,7 +224,7 @@ public class GameLogic {
     int[][]             board;
     boolean             end;
 
-    void        printBoard() {
+    private void        printBoard() {
         this.getBoard();
         System.out.print("  x    ");
         for (int i = 0; i < height; i++) {
@@ -250,7 +250,7 @@ public class GameLogic {
     // testing main
     public static void  main(String args[]) {
         GameLogic game = new GameLogic();
-        game.init(7,7);
+        game.init(5,5);
 
         /*
         game.playPos(1,0);
@@ -268,6 +268,8 @@ public class GameLogic {
 
         for ( ; ; ) {
             try {
+                System.out.println("Game end: " + game.isGameEnded());
+                System.out.println("Player turn: " + game.getCurrentPlayer());
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
