@@ -64,7 +64,7 @@ public class GameLogic {
     }
 
     public boolean      playPos(int x, int y) {
-        if (!end || !(posCanBePlayed(currentPlayer, x, y)))
+        if (end || !(posCanBePlayed(currentPlayer, x, y)))
             return false;
 
         takeStonesAround(currentPlayer, x, y);
@@ -76,10 +76,10 @@ public class GameLogic {
         return true;
     }
 
-    public void      passTurn(int teamId) {
-        if (teams[(teamId == 1 ? 1 : 0)].passedTurn)
+    public void      passTurn() { // give 0 for current player
+        if (teams[(currentPlayer == 1 ? 1 : 0)].passedTurn)
             end = true;
-        teams[teamId - 1].passedTurn = true;
+        teams[currentPlayer - 1].passedTurn = true;
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
     }
 
@@ -99,7 +99,7 @@ public class GameLogic {
                 }
             }
         }
-        passTurn(teamId);
+        passTurn();
         return false;
     }
 
@@ -270,6 +270,10 @@ public class GameLogic {
             try {
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
+                if (x == -1) {
+                    game.passTurn();
+                    continue;
+                }
                 System.out.print("y: ");
                 y = Integer.parseInt(br.readLine());
                 if (!(game.playPos(x, y)))
