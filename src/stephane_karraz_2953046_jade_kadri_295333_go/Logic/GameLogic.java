@@ -1,7 +1,10 @@
 package stephane_karraz_2953046_jade_kadri_295333_go.Logic;
 
+import javafx.util.Pair;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 
 public class GameLogic {
 
@@ -23,6 +26,7 @@ public class GameLogic {
                 board[i][j] = 0;
             }
         }
+        snapshots = new LinkedList<>();
     }
 
     public void         resetGame(int nbX, int nbY) {
@@ -69,10 +73,16 @@ public class GameLogic {
 
         takeStonesAround(currentPlayer, x, y);
         stones[x][y].teamId = currentPlayer;
-        updateOrCreateGroupWithStone(currentPlayer, x, y);
 
-        currentPlayer = (currentPlayer == 1 ? 2 : 1);
+        if (isKo()) {
+            restoreLastSnapshot();
+            return false;
+        }
+
+        updateOrCreateGroupWithStone(currentPlayer, x, y);
+        switchPlayers();
         checkAnyMovesAvailable(currentPlayer);
+        addSnapShot();
         return true;
     }
 
@@ -81,6 +91,17 @@ public class GameLogic {
             end = true;
         teams[currentPlayer - 1].passedTurn = true;
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
+    }
+
+    public void     rollbackTurn() {
+        if (snapshots.isEmpty())
+            return ;
+        snapshots.remove(0);
+        if (!snapshots.isEmpty())
+            restoreLastSnapshot();
+        else
+            resetGame(width, height);
+        switchPlayers();
     }
 
     public int          getCurrentPlayer() {
@@ -216,12 +237,69 @@ public class GameLogic {
         }
     }
 
+    private void        addSnapShot() {
+        int[][]         snapBoard = new int[width][height];
+        int[]           scores = new int[2];
+
+        scores[0] = teams[0].stonesTaken;
+        scores[1] = teams[1].stonesTaken;
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                snapBoard[i][j] = stones[i][j].teamId;
+            }
+        }
+        snapshots.push(new Pair<>(snapBoard, scores));
+    }
+
+    private void        restoreLastSnapshot() {
+        if (snapshots.isEmpty())
+            return ;
+        Pair<int[][], int[]> snap = snapshots.get(0);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                stones[i][j].teamId = snap.getKey()[i][j];
+            }
+        }
+        teams[0].groups.clear();
+        teams[1].groups.clear();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (stones[i][j].teamId > 0)
+                    updateOrCreateGroupWithStone(stones[i][j].teamId, i, j);
+            }
+        }
+        teams[0].stonesTaken = snap.getValue()[0];
+        teams[1].stonesTaken = snap.getValue()[1];
+    }
+
+    private boolean     isKo() {
+        if (snapshots.size() < 2)
+            return false;
+
+        Pair<int[][], int[]> snap = snapshots.get(1);
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                if (stones[i][j].teamId != snap.getKey()[i][j])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private void        switchPlayers() {
+        currentPlayer = (currentPlayer == 1 ? 2 : 1);
+    }
+
     int                 height, width;
     private int         currentPlayer;   // teamIds => 1 or 2, 0 for not played
     Team[]              teams;
 
     Stone[][]           stones;
     int[][]             board;
+
+    //        <board,takenStones>
+    LinkedList<Pair<int[][], int[]>> snapshots;
+
     boolean             end;
 
     private void        printBoard() {
@@ -274,6 +352,11 @@ public class GameLogic {
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
                     game.passTurn();
+                    continue;
+                }
+                if (x == -2) {
+                    game.rollbackTurn();
+                    game.printBoard();
                     continue;
                 }
                 System.out.print("y: ");
