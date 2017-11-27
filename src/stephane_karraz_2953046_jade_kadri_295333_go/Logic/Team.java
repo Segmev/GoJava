@@ -5,7 +5,7 @@ import java.util.List;
 
 class Team {
     private int         team;
-    List<StonesGroup>   groups;
+    List<LogicStonesGroup>   groups;
 
     int                 stonesTaken;
     boolean             passedTurn;
@@ -23,7 +23,7 @@ class Team {
     public int          getScore() {
         int stonesOnBoard = 0;
 
-        for (StonesGroup group : groups) {
+        for (LogicStonesGroup group : groups) {
             stonesOnBoard += group.group.size();
         }
         return stonesOnBoard + stonesTaken;

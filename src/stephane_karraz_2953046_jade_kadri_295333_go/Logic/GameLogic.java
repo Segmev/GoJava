@@ -18,11 +18,11 @@ public class GameLogic {
         teams[0] = new Team(1);
         teams[1] = new Team(2);
 
-        stones = new Stone[nbX][nbY];
+        stones = new LogicStone[nbX][nbY];
         board = new int[nbX][nbY];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                stones[i][j] = new Stone(0, i, j);
+                stones[i][j] = new LogicStone(0, i, j);
                 board[i][j] = 0;
             }
         }
@@ -129,7 +129,7 @@ public class GameLogic {
             return 0;
         if (stones[x][y].teamId == 0)
             return 1;
-        for (StonesGroup group: teams[teamId-1].groups) {
+        for (LogicStonesGroup group: teams[teamId-1].groups) {
             if (group.group.contains(stones[x][y])) {
                 updateGroupLiberties(group);
                 return group.liberties.size() - 1;
@@ -151,9 +151,9 @@ public class GameLogic {
         return (!(x < 0 || x >= width || y < 0 ||  y >= height));
     }
 
-    private void        updateGroupLiberties(StonesGroup group) {
+    private void        updateGroupLiberties(LogicStonesGroup group) {
         group.liberties.clear();
-        for(Stone stone: group.group) {
+        for(LogicStone stone: group.group) {
             if (isInBounds(stone.x-1, stone.y) && stones[stone.x-1][stone.y].teamId == 0) {
                 if (!(group.liberties.contains(stones[stone.x-1][stone.y])))
                     group.liberties.add(stones[stone.x-1][stone.y]);
@@ -173,9 +173,9 @@ public class GameLogic {
         }
     }
 
-    private void        transferStones(StonesGroup newGroup, int teamId, int X, int Y) {
+    private void        transferStones(LogicStonesGroup newGroup, int teamId, int X, int Y) {
         if (isInBounds(X, Y) && stones[X][Y].teamId == teamId) {
-            for (StonesGroup group: teams[teamId - 1].groups) {
+            for (LogicStonesGroup group: teams[teamId - 1].groups) {
                 if (group.group.contains(stones[X][Y])) {
                     newGroup.group.addAll(group.group);
                     teams[teamId - 1].groups.remove(group);
@@ -186,7 +186,7 @@ public class GameLogic {
     }
 
     private void        updateOrCreateGroupWithStone(int teamId, int x, int y) {
-        StonesGroup newGroup = new StonesGroup();
+        LogicStonesGroup newGroup = new LogicStonesGroup();
         transferStones(newGroup, teamId, x-1, y);
         transferStones(newGroup, teamId, x+1, y);
         transferStones(newGroup, teamId, x, y-1);
@@ -196,9 +196,9 @@ public class GameLogic {
         teams[teamId - 1].groups.add(newGroup);
     }
 
-    StonesGroup         canGroupsBeTaken(int teamId, int x, int y){
+    LogicStonesGroup canGroupsBeTaken(int teamId, int x, int y){
         if (isInBounds(x, y) && stones[x][y].teamId > 0 && stones[x][y].teamId != teamId) {
-            for (StonesGroup group: teams[(teamId == 1) ? 1 : 0].groups) {
+            for (LogicStonesGroup group: teams[(teamId == 1) ? 1 : 0].groups) {
                 if (group.group.contains(stones[x][y])) {
                     updateGroupLiberties(group);
                     if (group.liberties.size() <= 1) {
@@ -219,17 +219,17 @@ public class GameLogic {
     }
 
     private void        takeStonesAround(int teamId, int x, int y) {
-        StonesGroup[]   takenGroups = new StonesGroup[4];
+        LogicStonesGroup[]   takenGroups = new LogicStonesGroup[4];
 
         takenGroups[0] = canGroupsBeTaken(teamId, x-1, y);
         takenGroups[1] = canGroupsBeTaken(teamId, x+1, y);
         takenGroups[2] = canGroupsBeTaken(teamId, x, y-1);
         takenGroups[3] = canGroupsBeTaken(teamId, x, y+1);
 
-        for (StonesGroup tgroup : takenGroups) {
+        for (LogicStonesGroup tgroup : takenGroups) {
             if (tgroup != null) {
                 teams[teamId - 1].stonesTaken += tgroup.group.size();
-                for (Stone stone : tgroup.group) {
+                for (LogicStone stone : tgroup.group) {
                     stone.teamId = 0;
                 }
                 teams[(teamId == 1 ? 1 : 0)].groups.remove(tgroup);
@@ -294,7 +294,7 @@ public class GameLogic {
     private int         currentPlayer;   // teamIds => 1 or 2, 0 for not played
     Team[]              teams;
 
-    Stone[][]           stones;
+    LogicStone[][]           stones;
     int[][]             board;
 
     //        <board,takenStones>
@@ -302,28 +302,6 @@ public class GameLogic {
 
     boolean             end;
 
-    private void        printBoard() {
-        this.getBoard();
-        System.out.print("  x    ");
-        for (int i = 0; i < height; i++) {
-            System.out.print(i + " ");
-        }
-        System.out.print("\ny\n      ");
-
-        for (int i = 0; i < height; i++) {
-            System.out.print(" =");
-        }
-        System.out.println();
-
-        for (int i = 0; i < height; i++) {
-            System.out.print(i + "    |");
-            for (int j = 0; j < width; j++) {
-                System.out.print(" " + board[j][i]);
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
 
     // testing main
     public static void  main(String args[]) {
@@ -369,5 +347,27 @@ public class GameLogic {
                 System.err.println(e.getMessage());
             }
         }
+    }
+    private void        printBoard() {
+        this.getBoard();
+        System.out.print("  x    ");
+        for (int i = 0; i < height; i++) {
+            System.out.print(i + " ");
+        }
+        System.out.print("\ny\n      ");
+
+        for (int i = 0; i < height; i++) {
+            System.out.print(" =");
+        }
+        System.out.println();
+
+        for (int i = 0; i < height; i++) {
+            System.out.print(i + "    |");
+            for (int j = 0; j < width; j++) {
+                System.out.print(" " + board[j][i]);
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
