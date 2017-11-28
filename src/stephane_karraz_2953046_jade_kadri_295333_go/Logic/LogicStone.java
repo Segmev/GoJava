@@ -4,7 +4,7 @@ public class LogicStone {
     int     teamId;
     int     x, y;
 
-    LogicStone(int teamId, int x, int y) {
+    public LogicStone(int teamId, int x, int y) {
         this.teamId = teamId;
         this.x = x;
         this.y = y;
