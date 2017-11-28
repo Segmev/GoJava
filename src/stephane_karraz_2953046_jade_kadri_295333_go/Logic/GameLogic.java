@@ -12,6 +12,7 @@ public class GameLogic {
         width = nbX;
         height = nbY;
         end = false;
+        territoryPhase = false;
 
         currentPlayer = 1;
         teams = new Team[2];
@@ -20,6 +21,7 @@ public class GameLogic {
 
         stones = new LogicStone[nbX][nbY];
         board = new int[nbX][nbY];
+        territoryBoard = new int[nbX][nbY];
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 stones[i][j] = new LogicStone(0, i, j);
@@ -27,6 +29,39 @@ public class GameLogic {
             }
         }
         snapshots = new LinkedList<>();
+    }
+
+    public int[][]      territoryRemoveOrAdd(int x, int y) {
+        if (!(isInBounds(x, y)) || stones[x][y].teamId == 0)
+            return territoryBoard;
+        for (LogicStonesGroup group : teams[stones[x][y].teamId - 1].groups) {
+            if (group.group.contains(stones[x][y])) {
+                System.out.println("GOT THERE");
+                for (LogicStone stone: group.group) {
+                    territoryBoard[stone.x][stone.y] =
+                            (territoryBoard[stone.x][stone.y] == stone.teamId ?
+                                    territoryBoard[stone.x][stone.y] + 4
+                                    :
+                                    stone.teamId
+                            );
+                    removeTerritoryDirection(stone.x, stone.y, -1, 0, stone.teamId + 2);
+                    removeTerritoryDirection(stone.x, stone.y, 1, 0, stone.teamId + 2);
+                    removeTerritoryDirection(stone.x, stone.y, 0, -1, stone.teamId + 2);
+                    removeTerritoryDirection(stone.x, stone.y, 0, 1, stone.teamId + 2);
+                }
+                break;
+            }
+        }
+        return getUpdatedTerritory();
+    }
+
+    // 0: vide, 1 ou 2: team id: 3 ou 4: territoire vide, 5 ou 6: territoire avec groupe retiré
+    public int[][]      getTerritoryBoard() {
+        return territoryBoard;
+    }
+
+    public void         continueGame() {
+        territoryPhase = false;
     }
 
     public void         resetGame(int nbX, int nbY) {
@@ -68,7 +103,7 @@ public class GameLogic {
     }
 
     public boolean      playPos(int x, int y) {
-        if (end || !(posCanBePlayed(currentPlayer, x, y)))
+        if (end || territoryPhase || !(posCanBePlayed(currentPlayer, x, y)))
             return false;
 
         takeStonesAround(currentPlayer, x, y);
@@ -81,19 +116,26 @@ public class GameLogic {
 
         updateOrCreateGroupWithStone(currentPlayer, x, y);
         switchPlayers();
+        teams[currentPlayer - 1].passedTurn = false;
         checkAnyMovesAvailable(currentPlayer);
         addSnapShot();
         return true;
     }
 
-    public void      passTurn() { // give 0 for current player
-        if (teams[(currentPlayer == 1 ? 1 : 0)].passedTurn)
-            end = true;
+    public void         passTurn() { // give 0 for current player
+        if (teams[(currentPlayer == 1 ? 1 : 0)].passedTurn) {
+            territoryPhase = true;
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    territoryBoard[i][j] = stones[i][j].teamId;
+                }
+            }
+        }
         teams[currentPlayer - 1].passedTurn = true;
         currentPlayer = (currentPlayer == 1 ? 2 : 1);
     }
 
-    public void     rollbackTurn() {
+    public void         rollbackTurn() {
         if (snapshots.isEmpty())
             return ;
         snapshots.remove(0);
@@ -286,21 +328,78 @@ public class GameLogic {
         return true;
     }
 
-    private void        switchPlayers() {
-        currentPlayer = (currentPlayer == 1 ? 2 : 1);
+    private void        switchPlayers() { currentPlayer = (currentPlayer == 1 ? 2 : 1); }
+
+    private boolean     isWallOrTeamStoneAtTheEnd(int x, int y, int direX, int direY, int teamId) {
+        while (isInBounds(x + direX, y + direY)) {
+            if (territoryBoard[x+direX][y+direY] == teamId)
+                return true;
+            else if (territoryBoard[x+direX][y+direY] > 0 && territoryBoard[x+direX][y+direY] <= 2) {
+                return false;
+            }
+            direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
+            direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
+        }
+        return true;
+    }
+
+    private void        removeTerritoryDirection(int x, int y, int direX, int direY, int territoryId) {
+        while (isInBounds(x+direX, y+direY)) {
+            if (territoryBoard[x+direX][y+direY] == territoryId) {
+                territoryBoard[x+direX][y+direY] = 0;
+            } else if (territoryBoard[x+direX][y+direY] <= 2) {
+                break;
+            }
+
+            direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
+            direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
+        }
+    }
+
+    private void        updateDirection(int x, int y, int direX, int direY, int teamId) {
+        while (isInBounds(x+direX, y+direY)) {
+            if (territoryBoard[x+direX][y+direY] == 0) {
+                territoryBoard[x+direX][y+direY] = teamId + 2;
+            } else if (territoryBoard[x+direX][y+direY] <= 2) {
+                break;
+            }
+            direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
+            direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
+        }
+    }
+
+    private int[][]     getUpdatedTerritory() {
+        for (int i = 0; i < 2; i++) {
+            for (LogicStonesGroup group : teams[i].groups) {
+                for (LogicStone stone : group.group) {
+                    if (territoryBoard[stone.x][stone.y] <= 2) {
+                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, -1, 0, stone.teamId))
+                            updateDirection(stone.x, stone.y, -1, 0, stone.teamId);
+                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 1, 0, stone.teamId))
+                            updateDirection(stone.x, stone.y, 1, 0, stone.teamId);
+                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 0, -1, stone.teamId))
+                            updateDirection(stone.x, stone.y, 0, -1, stone.teamId);
+                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 0, 1, stone.teamId))
+                            updateDirection(stone.x, stone.y, 0, 1, stone.teamId);
+                    }
+                }
+            }
+        }
+        return territoryBoard;
     }
 
     int                 height, width;
     private int         currentPlayer;   // teamIds => 1 or 2, 0 for not played
     Team[]              teams;
 
-    LogicStone[][]           stones;
+    LogicStone[][]      stones;
     int[][]             board;
+    int[][]             territoryBoard;
 
     //        <board,takenStones>
     LinkedList<Pair<int[][], int[]>> snapshots;
 
-    boolean             end;
+    boolean             end, territoryPhase;
 
 
     // testing main
@@ -325,11 +424,13 @@ public class GameLogic {
         for ( ; ; ) {
             try {
                 System.out.println("Game end: " + game.isGameEnded());
+                System.out.println("Territory phase: " + game.territoryPhase);
                 System.out.println("Player turn: " + game.getCurrentPlayer());
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
                     game.passTurn();
+                    game.printBoard();
                     continue;
                 }
                 if (x == -2) {
@@ -339,8 +440,12 @@ public class GameLogic {
                 }
                 System.out.print("y: ");
                 y = Integer.parseInt(br.readLine());
-                if (!(game.playPos(x, y)))
-                    System.out.println("Bad move.");
+                if (!game.territoryPhase) {
+                    if (!(game.playPos(x, y)))
+                        System.out.println("Bad move.");
+                } else {
+                    game.territoryRemoveOrAdd(x, y);
+                }
                 game.printBoard();
                 System.out.println("score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
             } catch (Exception e) {
@@ -349,6 +454,12 @@ public class GameLogic {
         }
     }
     private void        printBoard() {
+        int[][] boar;
+        if (territoryPhase)
+            boar = getUpdatedTerritory();
+        else
+            boar = board;
+
         this.getBoard();
         System.out.print("  x    ");
         for (int i = 0; i < height; i++) {
@@ -364,7 +475,7 @@ public class GameLogic {
         for (int i = 0; i < height; i++) {
             System.out.print(i + "    |");
             for (int j = 0; j < width; j++) {
-                System.out.print(" " + board[j][i]);
+                System.out.print(" " + boar[j][i]);
             }
             System.out.println();
         }
