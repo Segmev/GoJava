@@ -36,7 +36,6 @@ public class GameLogic {
             return territoryBoard;
         for (LogicStonesGroup group : teams[stones[x][y].teamId - 1].groups) {
             if (group.group.contains(stones[x][y])) {
-                System.out.println("GOT THERE");
                 for (LogicStone stone: group.group) {
                     territoryBoard[stone.x][stone.y] =
                             (territoryBoard[stone.x][stone.y] == stone.teamId ?
@@ -44,10 +43,13 @@ public class GameLogic {
                                     :
                                     stone.teamId
                             );
-                    removeTerritoryDirection(stone.x, stone.y, -1, 0, stone.teamId + 2);
-                    removeTerritoryDirection(stone.x, stone.y, 1, 0, stone.teamId + 2);
-                    removeTerritoryDirection(stone.x, stone.y, 0, -1, stone.teamId + 2);
-                    removeTerritoryDirection(stone.x, stone.y, 0, 1, stone.teamId + 2);
+                    for (int a = -1; a <= 1; a++) {
+                        for (int b = -1; b <= 1; b++) {
+                            if (!(a == 0 && b == 0)) {
+                                removeTerritoryDirection(stone.x, stone.y, a, b, stone.teamId + 2);
+                            }
+                        }
+                    }
                 }
                 break;
             }
@@ -362,10 +364,12 @@ public class GameLogic {
                 territoryBoard[x+direX][y+direY] = teamId + 2;
             } else if (territoryBoard[x+direX][y+direY] <= 2) {
                 break;
+            } else if (territoryBoard[x+direX][y+direY] > teamId + 5) {
+                territoryBoard[x+direX][y+direY] = 42;
             }
             direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
             direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
-            if (Math.abs(direX) > 3 || Math.abs(direY) > 3)
+            if (Math.abs(direX) > 1 || Math.abs(direY) > 1)
                 break;
         }
     }
@@ -375,15 +379,21 @@ public class GameLogic {
             for (LogicStonesGroup group : teams[i].groups) {
                 for (LogicStone stone : group.group) {
                     if (territoryBoard[stone.x][stone.y] <= 2) {
-                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, -1, 0, stone.teamId))
-                            updateDirection(stone.x, stone.y, -1, 0, stone.teamId);
-                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 1, 0, stone.teamId))
-                            updateDirection(stone.x, stone.y, 1, 0, stone.teamId);
-                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 0, -1, stone.teamId))
-                            updateDirection(stone.x, stone.y, 0, -1, stone.teamId);
-                        if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, 0, 1, stone.teamId))
-                            updateDirection(stone.x, stone.y, 0, 1, stone.teamId);
+                        for (int a = -1; a <= 1; a++) {
+                            for (int b = -1; b <= 1; b++) {
+                                if (!(a == 0 && b == 0))
+                                    if (isWallOrTeamStoneAtTheEnd(stone.x, stone.y, a, b, stone.teamId))
+                                        updateDirection(stone.x, stone.y, a, b, stone.teamId);
+                            }
+                        }
                     }
+                }
+            }
+        }
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (territoryBoard[i][j] == 42) {
+                    territoryBoard[i][j] = 42;
                 }
             }
         }
