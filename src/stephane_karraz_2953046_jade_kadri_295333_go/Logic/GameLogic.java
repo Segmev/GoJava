@@ -365,6 +365,8 @@ public class GameLogic {
             }
             direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
             direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
+            if (Math.abs(direX) > 3 || Math.abs(direY) > 3)
+                break;
         }
     }
 
