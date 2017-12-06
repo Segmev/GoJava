@@ -382,7 +382,7 @@ public class GameLogic {
                 territoryBoard[x+direX][y+direY] = teamId + 2;
             } else if (territoryBoard[x+direX][y+direY] <= 2) {
                 break;
-            } else if (territoryBoard[x+direX][y+direY] > teamId + 5) {
+            } else {
                 territoryBoard[x+direX][y+direY] = 42;
             }
             direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
@@ -411,7 +411,7 @@ public class GameLogic {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (territoryBoard[i][j] == 42) {
-                    territoryBoard[i][j] = 42;
+                    territoryBoard[i][j] = 0;
                 }
             }
         }
