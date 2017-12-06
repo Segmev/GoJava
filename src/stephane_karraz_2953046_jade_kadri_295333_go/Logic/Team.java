@@ -20,12 +20,14 @@ class Team {
         return team;
     }
 
-    public int          getScore() {
+    public int          getScore(int territoryPoints) {
         int stonesOnBoard = 0;
 
-        for (LogicStonesGroup group : groups) {
-            stonesOnBoard += group.group.size();
+        if (territoryPoints == 0) {
+            for (LogicStonesGroup group : groups) {
+                stonesOnBoard += group.group.size();
+            }
         }
-        return stonesOnBoard + stonesTaken;
+        return stonesOnBoard + stonesTaken + territoryPoints;
     }
 }

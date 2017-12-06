@@ -75,7 +75,25 @@ public class GameLogic {
     }
 
     public int          getTeamScore(int teamId) {
-        return teams[teamId-1].getScore();
+        int             territoryPoints = 0;
+
+        if (territoryPhase) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    if (territoryBoard[i][j] % teamId == 0) {
+                        if (territoryBoard[i][j] == teamId + 2 || territoryBoard[i][j] == teamId) {
+                            territoryPoints += 1;
+                        } else if (territoryBoard[i][j] == teamId + 4) {
+                            territoryPoints -= 1;
+                        } else if (territoryBoard[i][j] == teamId + 5) {
+                            territoryPoints += 2;
+                        }
+                    }
+                }
+            }
+        }
+
+        return teams[teamId-1].getScore(territoryPoints);
     }
 
     public int          getStoneTeamIdAt(int x, int y) {
@@ -438,6 +456,7 @@ public class GameLogic {
                 System.out.println("Game end: " + game.isGameEnded());
                 System.out.println("Territory phase: " + game.territoryPhase);
                 System.out.println("Player turn: " + game.getCurrentPlayer());
+                System.out.println("score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
@@ -459,7 +478,6 @@ public class GameLogic {
                     game.territoryRemoveOrAdd(x, y);
                 }
                 game.printBoard();
-                System.out.println("score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
             } catch (Exception e) {
                 System.err.println(e.getMessage());
             }
