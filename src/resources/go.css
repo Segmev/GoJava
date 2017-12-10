@@ -1,0 +1,121 @@
+@font-face {
+    src: url("SuperMario256.ttf");
+}
+
+#black_stone {
+    -fx-fill: linear-gradient(#686868 0%, #232723 25%, #373837 75%, #757575 100%);
+    -fx-stroke: #303030;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+    -fx-effect: dropshadow(three-pass-box, rgba(30,30,30,0.5), 1,0.0 ,0 ,1);
+}
+
+#white_stone {
+    -fx-fill: linear-gradient(#d1d1d1 0%, #9e9e9e 25%, #bcbcbc 75%, #cecece 100%);
+    -fx-stroke: darkgray;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+    -fx-effect: dropshadow(three-pass-box, rgba(30,30,30,0.5), 1, 0.0, 0, 1);
+}
+
+#buttonPass {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #27ae60;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonPass:hover {
+    -fx-background-color: #2ecc71;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonRollBack {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #FF5722;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonRollBack:hover {
+    -fx-background-color: #FF8A65;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonReset {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #2980b9;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonReset:hover {
+    -fx-background-color: #3498db;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonHelp {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #f39c12;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonHelp:hover {
+    -fx-background-color: #f1c40f;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonEnd {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #D32F2F;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonEnd:hover {
+    -fx-background-color: #F44336;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonContinue {
+    -fx-font-family: "Super Mario 256";
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-background-color: #43A047;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
+
+#buttonContinue:hover {
+    -fx-background-color: #66BB6A;
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-stroke-line-cap: round;
+}
