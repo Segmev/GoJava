@@ -251,7 +251,7 @@ public class GoBoard extends Pane {
         turn_label.setLayoutX((width * 0.75) + (width * 0.125 - (166 / 2)));
         turn_label.setLayoutY(height * 0.34);
         turn_ellipse.setLayoutX((width * 0.75) + ((width * 0.125) - 25));
-        turn_ellipse.setLayoutY(height * 0.46);
+        turn_ellipse.setLayoutY(height * 0.45);
         separation.setEndY(height);
         separation_t.setX(width * 0.75);
         resizeButtons(width, height);
