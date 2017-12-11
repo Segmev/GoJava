@@ -64,6 +64,8 @@ public class GameLogic {
 
     public void         continueGame() {
         territoryPhase = false;
+        teams[0].passedTurn = false;
+        teams[1].passedTurn = false;
     }
 
     public void         resetGame(int nbX, int nbY) {
