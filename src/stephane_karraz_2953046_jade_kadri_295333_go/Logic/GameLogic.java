@@ -175,6 +175,8 @@ public class GameLogic {
         return currentPlayer;
     }
 
+    public boolean      isTerritoryPhase() { return territoryPhase; }
+
     // public methods
     // =====================
     // private methods
