@@ -163,8 +163,11 @@ public class GameLogic {
         snapshots.remove(0);
         if (!snapshots.isEmpty())
             restoreLastSnapshot();
-        else
+        else {
+            int player = currentPlayer;
             resetGame(width, height);
+            currentPlayer = player;
+        }
         switchPlayers();
     }
 
