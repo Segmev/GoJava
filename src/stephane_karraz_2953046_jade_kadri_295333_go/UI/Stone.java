@@ -15,20 +15,26 @@ public class Stone extends Group {
         getChildren().add(stone);
     }
 
-    private void createStone(String id, boolean visible)
+    private void createStone(String id, double size, boolean visible)
     {
+        st_size = size;
         stone.setId(id);
         stone.setVisible(visible);
     }
 
     void setStone(int teamId)
     {
+        System.out.println("Size : " + st_size);
         if (teamId == 1)
-            createStone("white_stone", true);
+            createStone("black_stone", st_size, true);
         else if (teamId == 2)
-            createStone("black_stone", true);
+            createStone("white_stone", st_size, true);
+        else if (teamId == 3)
+            createStone("black_stone", st_size / 3, true);
+        else if (teamId == 4)
+            createStone("white_stone", st_size / 3, true);
         else
-            createStone(null, false);
+            createStone("", st_size, false);
     }
 
     @Override
