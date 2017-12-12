@@ -464,12 +464,20 @@ public class GameLogic {
                 System.out.println("Game end: " + game.isGameEnded());
                 System.out.println("Territory phase: " + game.territoryPhase);
                 System.out.println("Player turn: " + game.getCurrentPlayer());
-                System.out.println("score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
+                System.out.println("Score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
+                if (!game.territoryPhase)
+                    System.out.println("Write -1 to pass and -2 to rollback turn.");
+                else
+                    System.out.println("Write -1 to go back and continue game.");
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
-                    game.passTurn();
-                    game.printBoard();
+                    if (!game.territoryPhase) {
+                        game.passTurn();
+                        game.printBoard();
+                    } else {
+                        game.continueGame();
+                    }
                     continue;
                 }
                 if (x == -2) {
@@ -487,7 +495,7 @@ public class GameLogic {
                 }
                 game.printBoard();
             } catch (Exception e) {
-                System.err.println(e.getMessage());
+
             }
         }
     }
