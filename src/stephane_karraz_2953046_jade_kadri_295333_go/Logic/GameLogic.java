@@ -105,6 +105,9 @@ public class GameLogic {
     }
 
     public int[][]      getBoard() {
+        if (territoryPhase) {
+            return (getUpdatedTerritory());
+        }
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 board[i][j] = stones[i][j].teamId;
