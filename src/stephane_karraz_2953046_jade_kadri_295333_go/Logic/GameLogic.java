@@ -392,8 +392,6 @@ public class GameLogic {
                 territoryBoard[x+direX][y+direY] = teamId + 2;
             } else if (territoryBoard[x+direX][y+direY] <= 2) {
                 break;
-            } else {
-                territoryBoard[x+direX][y+direY] = 42;
             }
             direX = (direX == 0 ? 0 : direX + (direX < 0 ? -1 : 1));
             direY = (direY == 0 ? 0 : direY + (direY < 0 ? -1 : 1));
