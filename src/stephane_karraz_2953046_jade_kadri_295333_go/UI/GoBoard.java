@@ -1,5 +1,7 @@
 package stephane_karraz_2953046_jade_kadri_295333_go.UI;
 
+import com.sun.deploy.uitoolkit.impl.fx.HostServicesFactory;
+import com.sun.javafx.application.HostServicesDelegate;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -13,12 +15,17 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Translate;
 import stephane_karraz_2953046_jade_kadri_295333_go.Logic.GameLogic;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class GoBoard extends Pane {
     GoBoard() {
-        score_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 35);
-        turn_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 23);
-        pos_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 25);
-        win_font = Font.loadFont(GoBoard.class.getResource("../../resources/SuperMario256.ttf").toExternalForm(), 70);
+        score_font = Font.loadFont(GoBoard.class.getResource("../resources/SuperMario256.ttf").toExternalForm(), 35);
+        turn_font = Font.loadFont(GoBoard.class.getResource("../resources/SuperMario256.ttf").toExternalForm(), 23);
+        pos_font = Font.loadFont(GoBoard.class.getResource("../resources/SuperMario256.ttf").toExternalForm(), 25);
+        win_font = Font.loadFont(GoBoard.class.getResource("../resources/SuperMario256.ttf").toExternalForm(), 70);
         gl_go = new GameLogic();
         gl_go.resetGame(7, 7);
         initialiseBoardUI();
@@ -32,27 +39,28 @@ public class GoBoard extends Pane {
 
     private void initialiseBoardUI()
     {
-        Image bg_image_board = new Image("resources/board.jpg");
-        Image bg_image_menu = new Image("resources/menu.jpg");
+        Image bg_image_board = new Image("stephane_karraz_2953046_jade_kadri_295333_go/resources/board.jpg");
+        Image bg_image_menu = new Image("stephane_karraz_2953046_jade_kadri_295333_go/resources/menu.jpg");
         ImagePattern ip_background_board = new ImagePattern(bg_image_board);
         ImagePattern ip_background_menu = new ImagePattern(bg_image_menu);
         background_board = new Rectangle();
         background_menu = new Rectangle();
         background_board.setFill(ip_background_board);
-        background_menu.setFill(ip_background_menu);
+        //background_menu.setFill(ip_background_menu);
+        background_menu.setStyle("-fx-fill: #F9ED69;");
         getChildren().addAll(background_board, background_menu);
     }
 
     private void initialiseButtons()
     {
         btn1 = new Button("Pass");
-        btn1.setId("buttonPass");
+        btn1.setId("button1");
         btn2 = new Button("Roll Back");
-        btn2.setId("buttonRollBack");
+        btn2.setId("button2");
         btn3 = new Button("Reset Game");
-        btn3.setId("buttonReset");
+        btn3.setId("button3");
         btn4 = new Button("Help");
-        btn4.setId("buttonHelp");
+        btn4.setId("button4");
         getChildren().addAll(btn1, btn2, btn3, btn4);
     }
 
@@ -98,12 +106,13 @@ public class GoBoard extends Pane {
     private void initialiseStonesTerritories()
     {
         stone = new Stone[7][7];
-        territories = new Stone[7][7];
+        tp_stone = new Stone[7][7];
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
             {
-                stone[i][j] = new Stone(0, 30);
-                getChildren().addAll(stone[i][j]);
+                stone[i][j] = new Stone(0, 1);
+                tp_stone[i][j] = new Stone(0, 0.7);
+                getChildren().addAll(tp_stone[i][j], stone[i][j]);
             }
     }
 
@@ -129,15 +138,30 @@ public class GoBoard extends Pane {
         getChildren().add(win_label);
     }
 
-    void placePiece(double x, double y) {
-        int cell_x = (int) ((x - 100) / cell_width);
-        int cell_y = (int) ((y - 100) / cell_height);
-        if (!gl_go.playPos(cell_x , cell_y))
-            return;
-        int[][] board = gl_go.getBoard();
+    void resetGame()
+    {
+        gl_go.resetGame(7, 7);
+        p1s_label.setText(" : " + gl_go.getTeamScore(1));
+        p2s_label.setText(" : " + gl_go.getTeamScore(2));
+        win_label.setVisible(false);
+        btn1.setText("Pass");
+        btn2.setText("Roll Back");
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
-                stone[i][j].setStone(board[i][j]);
+                stone[i][j].setStone(0);
+        turn_ellipse.setId("black_stone");
+    }
+
+    void placePiece(double x, double y) {
+        int cell_x = (int) ((x - (100 - cell_width / 2)) / cell_width);
+        int cell_y = (int) ((y - (100 - cell_height / 2)) / cell_height);
+        if (gl_go.isGameEnded()) {
+            System.out.println("True");
+            return;
+        }
+        if (!gl_go.playPos(cell_x , cell_y))
+            return;
+        getBoard();
         if (gl_go.getCurrentPlayer() == 2)
             turn_ellipse.setId("white_stone");
         else
@@ -146,19 +170,15 @@ public class GoBoard extends Pane {
         p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
-    void resetGame()
-    {
-        gl_go.resetGame(7, 7);
-        p1s_label.setText(" : " + gl_go.getTeamScore(1));
-        p2s_label.setText(" : " + gl_go.getTeamScore(2));
-        btn1.setText("Pass");
-        btn1.setId("buttonPass");
-        btn2.setText("Roll Back");
-        btn2.setId("buttonRollBack");
+    void removePiece(double x, double y) {
+        int cell_x = (int) ((x - (100 - cell_width / 2)) / cell_width);
+        int cell_y = (int) ((y - (100 - cell_height / 2)) / cell_height);
+        gl_go.territoryRemoveOrAdd(cell_x, cell_y);
+        getBoard();
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
-                stone[i][j].setStone(0);
-        turn_ellipse.setId("black_stone");
+                if (stone[i][j].getTeamId() == 5 || stone[i][j].getTeamId() == 6)
+                    tp_stone[cell_x][cell_y].setStone(stone[cell_x][cell_y].getTeamId());
     }
 
     void passTurn()
@@ -181,6 +201,9 @@ public class GoBoard extends Pane {
     void continueGame()
     {
         gl_go.continueGame();
+        for (int i = 0; i < 7; i++)
+            for (int j = 0; j < 7; j++)
+                tp_stone[i][j].setStone(0);
         getBoard();
     }
 
@@ -201,10 +224,29 @@ public class GoBoard extends Pane {
 
     void endGame()
     {
+        int black = gl_go.getTeamScore(1);
+        int white = gl_go.getTeamScore(2);
+        win_label.setVisible(true);
+        if (black > white)
+            win_label.setText("Black WINS !");
+        else if (black < white)
+            win_label.setText("White WINS !");
+        else
+            win_label.setText("It's a Draw !");
+        gl_go.gameIsNowOver();
     }
 
     void helpGame()
     {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(new URI("https://www.kiseido.com/ff.htm"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -290,7 +332,9 @@ public class GoBoard extends Pane {
             for (int j = 0; j < 7; j++)
             {
                 stone[i][j].resize(cell_width, cell_height);
+                tp_stone[i][j].resize(cell_width, cell_height);
                 stone[i][j].relocate((100 - stone[i][j].st_size) + (i * cell_width), (100 - stone[i][j].st_size) + (j * cell_height));
+                tp_stone[i][j].relocate((100 - tp_stone[i][j].st_size) + (i * cell_width), (100 - tp_stone[i][j].st_size) + (j * cell_height));
             }
     }
 
@@ -333,8 +377,7 @@ public class GoBoard extends Pane {
 
     Button btn1, btn2, btn3, btn4;
     GameLogic gl_go;
-    private Stone[][] stone;
-    private Stone[][] territories;
+    private Stone[][] stone, tp_stone;
     private Label p1s_label, p2s_label, turn_label, win_label;
     private Rectangle background_menu, background_board;
     private Ellipse p1s_ellipse, p2s_ellipse, turn_ellipse;

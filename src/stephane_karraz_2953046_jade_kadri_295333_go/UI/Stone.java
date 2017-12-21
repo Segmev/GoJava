@@ -5,12 +5,13 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Translate;
 
 public class Stone extends Group {
-    Stone(int teamId, double size)
+    Stone(int teamId, double op)
     {
+        this.teamId = teamId;
+        this.op = op;
         stone = new Ellipse();
         stone_t = new Translate();
         stone.getTransforms().add(stone_t);
-        st_size = size;
         setStone(teamId);
         getChildren().add(stone);
     }
@@ -20,21 +21,27 @@ public class Stone extends Group {
         st_size = size;
         stone.setId(id);
         stone.setVisible(visible);
+        stone.setOpacity(op);
     }
 
     void setStone(int teamId)
     {
-        System.out.println("Size : " + st_size);
-        if (teamId == 1)
-            createStone("black_stone", st_size, true);
-        else if (teamId == 2)
-            createStone("white_stone", st_size, true);
-        else if (teamId == 3)
-            createStone("black_stone", st_size / 3, true);
-        else if (teamId == 4)
-            createStone("white_stone", st_size / 3, true);
+        this.teamId = teamId;
+        if (teamId == 1 || (teamId == 5 && op == 0.7))
+            createStone("black_stone", 30, true);
+        else if (teamId == 2 || (teamId == 6 && op == 0.7))
+            createStone("white_stone", 30, true);
+        else if (teamId == 3 || (teamId == 6 && op == 1))
+            createStone("black_stone", 11, true);
+        else if (teamId == 4 || (teamId == 5 && op == 1))
+            createStone("white_stone", 11, true);
         else
-            createStone("", st_size, false);
+            createStone("", 30, false);
+    }
+
+    int getTeamId()
+    {
+        return teamId;
     }
 
     @Override
@@ -54,6 +61,8 @@ public class Stone extends Group {
     }
 
     double st_size;
+    private int teamId;
+    private double op;
     private Ellipse stone;
     private Translate stone_t;
 }

@@ -8,30 +8,29 @@ public class CustomControl extends Control {
         go_board = new GoBoard();
         getChildren().add(go_board);
         setOnMouseClicked(event -> {
-            go_board.placePiece(event.getX(), event.getY());
+            if (!go_board.gl_go.isTerritoryPhase() && !go_board.gl_go.isGameEnded())
+               go_board.placePiece(event.getX(), event.getY());
+            else
+                go_board.removePiece(event.getX(), event.getY());
         });
         go_board.btn1.setOnAction(event -> {
-            if (go_board.btn1.getText().equals("Pass"))
+            if (go_board.btn1.getText().equals("Pass") && !go_board.gl_go.isGameEnded())
                 go_board.passTurn();
-            else if (go_board.btn1.getText().equals("Continue")) {
+            else if (go_board.btn1.getText().equals("Continue") && !go_board.gl_go.isGameEnded()) {
                 go_board.continueGame();
                 go_board.btn1.setText("Pass");
-                go_board.btn1.setId("buttonPass");
                 go_board.btn2.setText("Roll Back");
-                go_board.btn2.setId("buttonRollBack");
             }
-            if (go_board.gl_go.isTerritoryPhase()) {
+            if (go_board.gl_go.isTerritoryPhase() && !go_board.gl_go.isGameEnded()) {
                 go_board.btn1.setText("Continue");
-                go_board.btn1.setId("buttonContinue");
                 go_board.btn2.setText("End Game");
-                go_board.btn2.setId("buttonEnd");
                 go_board.getBoard();
             }
         });
         go_board.btn2.setOnAction(event -> {
-            if (go_board.btn2.getText().equals("Roll Back"))
+            if (go_board.btn2.getText().equals("Roll Back") && !go_board.gl_go.isGameEnded())
                 go_board.rollBack();
-            else if (go_board.btn2.getText().equals("End Game"))
+            else if (go_board.btn2.getText().equals("End Game") && !go_board.gl_go.isGameEnded())
                 go_board.endGame();
         });
         go_board.btn3.setOnAction(event -> {

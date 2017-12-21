@@ -10,7 +10,7 @@ public class Go extends Application {
     public void init() {
         sp_mainlayout = new StackPane();
         go_scene = new Scene(sp_mainlayout, 800, 600);
-        go_scene.getStylesheets().add("resources/go.css");
+        go_scene.getStylesheets().add("stephane_karraz_2953046_jade_kadri_295333_go/resources/go.css");
         go_controller = new CustomControl();
         sp_mainlayout.getChildren().add(go_controller);
     }
