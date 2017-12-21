@@ -76,6 +76,10 @@ public class GameLogic {
         return end;
     }
 
+    public void         gameIsNowOver() {
+        end = true;
+    }
+
     public int          getTeamScore(int teamId) {
         int             territoryPoints = 0;
 
@@ -468,7 +472,7 @@ public class GameLogic {
                 if (!game.territoryPhase)
                     System.out.println("Write -1 to pass and -2 to rollback turn.");
                 else
-                    System.out.println("Write -1 to go back and continue game.");
+                    System.out.println("Write -1 to go back and continue game, and -2 to end the game.");
                 System.out.print("x: ");
                 x = Integer.parseInt(br.readLine());
                 if (x == -1) {
@@ -481,9 +485,17 @@ public class GameLogic {
                     continue;
                 }
                 if (x == -2) {
-                    game.rollbackTurn();
-                    game.printBoard();
-                    continue;
+                    if (!game.territoryPhase) {
+                        game.rollbackTurn();
+                        game.printBoard();
+                        continue;
+                    } else {
+                        game.gameIsNowOver();
+                        System.out.println("Game end: " + game.isGameEnded());
+                        System.out.println("Score: player_1  " + game.getTeamScore(1) + " --- player_2  " + game.getTeamScore(2));
+                        System.out.println("Player " + (game.getTeamScore(1) > game.getTeamScore(2) ? "1" : "2") + " has won!");
+                        break;
+                    }
                 }
                 System.out.print("y: ");
                 y = Integer.parseInt(br.readLine());
