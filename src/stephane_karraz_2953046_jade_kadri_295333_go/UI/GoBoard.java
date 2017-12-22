@@ -178,6 +178,8 @@ public class GoBoard extends Pane {
             for (int j = 0; j < 7; j++)
                 if (stone[i][j].getTeamId() == 5 || stone[i][j].getTeamId() == 6)
                     tp_stone[cell_x][cell_y].setStone(stone[cell_x][cell_y].getTeamId());
+        p1s_label.setText(" : " + gl_go.getTeamScore(1));
+        p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
     void passTurn()
@@ -187,6 +189,9 @@ public class GoBoard extends Pane {
             turn_ellipse.setId("white_stone");
         else
             turn_ellipse.setId("black_stone");
+        getBoard();
+        p1s_label.setText(" : " + gl_go.getTeamScore(1));
+        p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
     void getBoard()
@@ -203,6 +208,8 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
                 tp_stone[i][j].setStone(0);
+        p1s_label.setText(" : " + gl_go.getTeamScore(1));
+        p2s_label.setText(" : " + gl_go.getTeamScore(2));
         getBoard();
     }
 

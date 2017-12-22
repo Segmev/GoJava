@@ -9,7 +9,7 @@ public class CustomControl extends Control {
         getChildren().add(go_board);
         setOnMouseClicked(event -> {
             if (!go_board.gl_go.isTerritoryPhase() && !go_board.gl_go.isGameEnded())
-               go_board.placePiece(event.getX(), event.getY());
+                go_board.placePiece(event.getX(), event.getY());
             else
                 go_board.removePiece(event.getX(), event.getY());
         });
