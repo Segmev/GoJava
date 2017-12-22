@@ -39,10 +39,14 @@ public class Stone extends Group {
             createStone("", 30, false);
     }
 
-    int getTeamId()
-    {
+    int getTeamId() {
         return teamId;
     }
+
+    double getSize() {
+        return st_size;
+    }
+
 
     @Override
     public void resize(double width, double height) {
@@ -60,7 +64,7 @@ public class Stone extends Group {
         stone_t.setY(y);
     }
 
-    double st_size;
+    private double st_size;
     private int teamId;
     private double op;
     private Ellipse stone;

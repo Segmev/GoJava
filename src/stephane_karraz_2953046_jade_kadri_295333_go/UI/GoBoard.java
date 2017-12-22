@@ -339,8 +339,8 @@ public class GoBoard extends Pane {
             {
                 stone[i][j].resize(cell_width, cell_height);
                 tp_stone[i][j].resize(cell_width, cell_height);
-                stone[i][j].relocate((100 - stone[i][j].st_size) + (i * cell_width), (100 - stone[i][j].st_size) + (j * cell_height));
-                tp_stone[i][j].relocate((100 - tp_stone[i][j].st_size) + (i * cell_width), (100 - tp_stone[i][j].st_size) + (j * cell_height));
+                stone[i][j].relocate((100 - stone[i][j].getSize()) + (i * cell_width), (100 - stone[i][j].getSize()) + (j * cell_height));
+                tp_stone[i][j].relocate((100 - tp_stone[i][j].getSize()) + (i * cell_width), (100 - tp_stone[i][j].getSize()) + (j * cell_height));
             }
     }
 
