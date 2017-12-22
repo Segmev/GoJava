@@ -46,8 +46,7 @@ public class GoBoard extends Pane {
         background_board = new Rectangle();
         background_menu = new Rectangle();
         background_board.setFill(ip_background_board);
-        //background_menu.setFill(ip_background_menu);
-        background_menu.setStyle("-fx-fill: #F9ED69;");
+        background_menu.setFill(ip_background_menu);
         getChildren().addAll(background_board, background_menu);
     }
 
