@@ -35,8 +35,7 @@ public class GoBoard extends Pane {
         resetGame();
     }
 
-    private void initialiseBoardUI()
-    {
+    private void initialiseBoardUI() {
         Image bg_image_board = new Image("stephane_karraz_2953046_jade_kadri_295333_go/resources/board.jpg");
         Image bg_image_menu = new Image("stephane_karraz_2953046_jade_kadri_295333_go/resources/menu.jpg");
         ImagePattern ip_background_board = new ImagePattern(bg_image_board);
@@ -48,8 +47,7 @@ public class GoBoard extends Pane {
         getChildren().addAll(background_board, background_menu);
     }
 
-    private void initialiseButtons()
-    {
+    private void initialiseButtons() {
         btn1 = new Button("Pass");
         btn1.setId("button1");
         btn2 = new Button("Roll Back");
@@ -61,8 +59,7 @@ public class GoBoard extends Pane {
         getChildren().addAll(btn1, btn2, btn3, btn4);
     }
 
-    private void initialiseStroke()
-    {
+    private void initialiseStroke() {
         horizontal = new Line[7];
         vertical = new Line[7];
         horizontal_t = new Translate[7];
@@ -70,8 +67,7 @@ public class GoBoard extends Pane {
         separation = createLine(0, 0, 0, 0, "-fx-stroke-width: 6;");
         separation_t = new Translate(0, 0);
         separation.getTransforms().add(separation_t);
-        for (int i = 0; i < 7; i++)
-        {
+        for (int i = 0; i < 7; i++) {
             horizontal[i] = createLine(100, 100, 0, 100, "-fx-stroke-width: 3;");
             horizontal_t[i] = new Translate(0, 0);
             horizontal[i].getTransforms().add(horizontal_t[i]);
@@ -83,8 +79,7 @@ public class GoBoard extends Pane {
         getChildren().add(separation);
     }
 
-    private void initialiseScore()
-    {
+    private void initialiseScore() {
         p1s_label = createLabel(" : " + gl_go.getTeamScore(1), Color.BLACK, score_font);
         p2s_label = createLabel(" : " + gl_go.getTeamScore(2), Color.BLACK, score_font);
         turn_label = createLabel("Player Turn", Color.BLACK, turn_font);
@@ -100,29 +95,25 @@ public class GoBoard extends Pane {
         getChildren().addAll(p1s_ellipse, p2s_ellipse, turn_ellipse, p1s_label, p2s_label, turn_label);
     }
 
-    private void initialiseStonesTerritories()
-    {
+    private void initialiseStonesTerritories() {
         stone = new Stone[7][7];
         tp_stone = new Stone[7][7];
         for (int i = 0; i < 7; i++)
-            for (int j = 0; j < 7; j++)
-            {
+            for (int j = 0; j < 7; j++) {
                 stone[i][j] = new Stone(0, 1);
                 tp_stone[i][j] = new Stone(0, 0.7);
                 getChildren().addAll(tp_stone[i][j], stone[i][j]);
             }
     }
 
-    private void initialisePosLabel()
-    {
+    private void initialisePosLabel() {
         lb_horizontal_top = new Label[7];
         lb_horizontal_bottom = new Label[7];
         lb_vertical_left = new Label[7];
         lb_vertical_right = new Label[7];
         char pos_letter = 'A';
         int pos_number = 7;
-        for (char i = 0; i < 7; i++)
-        {
+        for (char i = 0; i < 7; i++) {
             char letter = (char) (pos_letter + i);
             lb_horizontal_top[i] = createLabel("" + letter, Color.BLACK, pos_font);
             lb_horizontal_bottom[i] = createLabel("" + letter, Color.BLACK, pos_font);
@@ -135,8 +126,7 @@ public class GoBoard extends Pane {
         getChildren().add(win_label);
     }
 
-    void resetGame()
-    {
+    void resetGame() {
         gl_go.resetGame(7, 7);
         p1s_label.setText(" : " + gl_go.getTeamScore(1));
         p2s_label.setText(" : " + gl_go.getTeamScore(2));
@@ -175,13 +165,12 @@ public class GoBoard extends Pane {
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
                 if (stone[i][j].getTeamId() == 5 || stone[i][j].getTeamId() == 6)
-                    tp_stone[cell_x][cell_y].setStone(stone[cell_x][cell_y].getTeamId());
+                    tp_stone[i][j].setStone(stone[i][j].getTeamId());
         p1s_label.setText(" : " + gl_go.getTeamScore(1));
         p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
-    void passTurn()
-    {
+    void passTurn() {
         gl_go.passTurn();
         if (gl_go.getCurrentPlayer() == 2)
             turn_ellipse.setId("white_stone");
@@ -192,16 +181,14 @@ public class GoBoard extends Pane {
         p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
-    void getBoard()
-    {
+    void getBoard() {
         int[][] gl_board = gl_go.getBoard();
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
                 stone[i][j].setStone(gl_board[i][j]);
     }
 
-    void continueGame()
-    {
+    void continueGame() {
         gl_go.continueGame();
         for (int i = 0; i < 7; i++)
             for (int j = 0; j < 7; j++)
@@ -211,8 +198,7 @@ public class GoBoard extends Pane {
         getBoard();
     }
 
-    void rollBack()
-    {
+    void rollBack() {
         gl_go.rollbackTurn();
         int[][] board = gl_go.getBoard();
         for (int i = 0; i < 7; i++)
@@ -226,8 +212,7 @@ public class GoBoard extends Pane {
         p2s_label.setText(" : " + gl_go.getTeamScore(2));
     }
 
-    void endGame()
-    {
+    void endGame() {
         int black = gl_go.getTeamScore(1);
         int white = gl_go.getTeamScore(2);
         win_label.setVisible(true);
@@ -240,8 +225,7 @@ public class GoBoard extends Pane {
         gl_go.gameIsNowOver();
     }
 
-    void helpGame()
-    {
+    void helpGame() {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI("https://www.kiseido.com/ff.htm"));
@@ -269,8 +253,7 @@ public class GoBoard extends Pane {
         resizeStones();
     }
 
-    private void resizeMenu(double width, double height)
-    {
+    private void resizeMenu(double width, double height) {
         background_menu.setX(width * 0.75);
         background_menu.setWidth(width * 0.25);
         background_menu.setHeight(height);
@@ -287,16 +270,14 @@ public class GoBoard extends Pane {
         resizeButtons(width, height);
     }
 
-    private void resizeButtons(double width, double height)
-    {
+    private void resizeButtons(double width, double height) {
         btn1 = resizeButton(btn1, width * 0.75, height * 0.60, width * 0.25, height * 0.10);
         btn2 = resizeButton(btn2, width * 0.75, height * 0.70, width * 0.25, height * 0.10);
         btn3 = resizeButton(btn3, width * 0.75, height * 0.80, width * 0.25, height * 0.10);
         btn4 = resizeButton(btn4, width * 0.75, height * 0.90, width * 0.25, height * 0.10);
     }
 
-    private Button resizeButton(Button btn, double x, double y, double width, double height)
-    {
+    private Button resizeButton(Button btn, double x, double y, double width, double height) {
         btn.setLayoutX(x);
         btn.setLayoutY(y);
         btn.setMinWidth(width);
@@ -304,10 +285,8 @@ public class GoBoard extends Pane {
         return (btn);
     }
 
-    private void resizeHorizontal(double width, double height)
-    {
-        for (int i = 0; i < 7; i++)
-        {
+    private void resizeHorizontal(double width, double height) {
+        for (int i = 0; i < 7; i++) {
             lb_horizontal_top[i].setLayoutX(93 + (cell_width * (i)));
             lb_horizontal_top[i].setLayoutY(height - (height - 25));
             lb_horizontal_bottom[i].setLayoutX(93 + (cell_width * (i)));
@@ -317,10 +296,8 @@ public class GoBoard extends Pane {
         }
     }
 
-    private void resizeVertical(double width, double height)
-    {
-        for (int i = 0; i < 7; i++)
-        {
+    private void resizeVertical(double width, double height) {
+        for (int i = 0; i < 7; i++) {
             lb_vertical_left[i].setLayoutY(80 + (cell_height * (i)));
             lb_vertical_left[i].setLayoutX(width - (width - 35));
             lb_vertical_right[i].setLayoutY(80 + (cell_height * (i)));
@@ -330,11 +307,9 @@ public class GoBoard extends Pane {
         }
     }
 
-    private void resizeStones()
-    {
+    private void resizeStones() {
         for (int i = 0; i < 7; i++)
-            for (int j = 0; j < 7; j++)
-            {
+            for (int j = 0; j < 7; j++) {
                 stone[i][j].resize(cell_width, cell_height);
                 tp_stone[i][j].resize(cell_width, cell_height);
                 stone[i][j].relocate((100 - stone[i][j].getSize()) + (i * cell_width), (100 - stone[i][j].getSize()) + (j * cell_height));
@@ -349,16 +324,14 @@ public class GoBoard extends Pane {
         p2s_ellipse_t.setY(height * 0.23);
     }
 
-    private Label createLabel(String text, Color color, Font font)
-    {
+    private Label createLabel(String text, Color color, Font font) {
         Label label = new Label(text);
         label.setFont(font);
         label.setTextFill(color);
         return label;
     }
 
-    private Line createLine(double start_x, double start_y, double end_x, double end_y, String style)
-    {
+    private Line createLine(double start_x, double start_y, double end_x, double end_y, String style) {
         Line line = new Line();
         line.setStartX(start_x);
         line.setStartY(start_y);
@@ -368,8 +341,7 @@ public class GoBoard extends Pane {
         return line;
     }
 
-    private Ellipse createEllipse(double size, String id)
-    {
+    private Ellipse createEllipse(double size, String id) {
         Ellipse ellipse = new Ellipse();
         ellipse.setId(id);
         ellipse.setRadiusX(size);
