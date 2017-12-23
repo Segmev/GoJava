@@ -303,7 +303,7 @@ public class GameLogic {
         takenGroups[3] = canGroupsBeTaken(teamId, x, y+1);
 
         for (LogicStonesGroup tgroup : takenGroups) {
-            if (tgroup != null) {
+            if (tgroup != null && tgroup.group.get(0).teamId > 0) {
                 teams[teamId - 1].stonesTaken += tgroup.group.size();
                 for (LogicStone stone : tgroup.group) {
                     stone.teamId = 0;
