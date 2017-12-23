@@ -134,8 +134,10 @@ public class GoBoard extends Pane {
         btn1.setText("Pass");
         btn2.setText("Roll Back");
         for (int i = 0; i < 7; i++)
-            for (int j = 0; j < 7; j++)
+            for (int j = 0; j < 7; j++) {
                 stone[i][j].setStone(0);
+                tp_stone[i][j].setStone(0);
+            }
         turn_ellipse.setId("black_stone");
     }
 
