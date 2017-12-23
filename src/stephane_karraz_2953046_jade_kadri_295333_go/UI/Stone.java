@@ -5,8 +5,7 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.transform.Translate;
 
 public class Stone extends Group {
-    Stone(int teamId, double op)
-    {
+    Stone(int teamId, double op) {
         this.teamId = teamId;
         this.op = op;
         stone = new Ellipse();
@@ -16,16 +15,14 @@ public class Stone extends Group {
         getChildren().add(stone);
     }
 
-    private void createStone(String id, double size, boolean visible)
-    {
+    private void createStone(String id, double size, boolean visible) {
         st_size = size;
         stone.setId(id);
         stone.setVisible(visible);
         stone.setOpacity(op);
     }
 
-    void setStone(int teamId)
-    {
+    void setStone(int teamId) {
         this.teamId = teamId;
         if (teamId == 1 || (teamId == 5 && op == 0.7))
             createStone("black_stone", 30, true);
